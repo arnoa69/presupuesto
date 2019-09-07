@@ -12,7 +12,10 @@ $routes->add('budget_step_two', new Route('/step_two', [
     '_controller' => [BudgetController::class, 'step_two']
 ]));
 $routes->add('budget_step_three', new Route('/step_three', [
-    '_controller' => [BudgetController::class, 'step_tree']
+    '_controller' => [BudgetController::class, 'step_three']
+]));
+$routes->add('budget_step_four', new Route('/step_four', [
+    '_controller' => [BudgetController::class, 'step_four']
 ]));
 
 return $routes;
