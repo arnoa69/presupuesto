@@ -37,6 +37,11 @@ class Booking
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status_completed;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +91,18 @@ class Booking
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getStatusCompleted(): ?bool
+    {
+        return $this->status_completed;
+    }
+
+    public function setStatusCompleted(bool $status_completed): self
+    {
+        $this->status_completed = $status_completed;
 
         return $this;
     }
