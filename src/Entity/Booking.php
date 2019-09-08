@@ -42,6 +42,11 @@ class Booking
      */
     private $status_completed;
 
+    /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $price_factor;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,6 +108,18 @@ class Booking
     public function setStatusCompleted(bool $status_completed): self
     {
         $this->status_completed = $status_completed;
+
+        return $this;
+    }
+
+    public function getPriceFactor(): ?int
+    {
+        return $this->price_factor;
+    }
+
+    public function setPriceFactor(?int $price_factor): self
+    {
+        $this->price_factor = $price_factor;
 
         return $this;
     }
