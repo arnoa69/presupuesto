@@ -17,7 +17,7 @@ class Booking
     private $id;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $booking_date;
 
@@ -47,17 +47,22 @@ class Booking
      */
     private $price_factor;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $category_id;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getBookingDate(): ?\DateTimeInterface
+    public function getBookingDate(): ?string
     {
         return $this->booking_date;
     }
 
-    public function setBookingDate(?\DateTimeInterface $booking_date): self
+    public function setBookingDate(?string $booking_date): self
     {
         $this->booking_date = $booking_date;
 
@@ -120,6 +125,18 @@ class Booking
     public function setPriceFactor(?int $price_factor): self
     {
         $this->price_factor = $price_factor;
+
+        return $this;
+    }
+
+    public function getCategoryId(): ?int
+    {
+        return $this->category_id;
+    }
+
+    public function setCategoryId(?int $category_id): self
+    {
+        $this->category_id = $category_id;
 
         return $this;
     }

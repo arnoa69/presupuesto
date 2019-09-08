@@ -10,10 +10,10 @@
  
 namespace App\Controller;
 
-use App\Form\Type\UserType;
-
 use App\Entity\User;
-//use App\Entity\Category;
+use App\Entity\Booking;
+use App\Form\Type\UserType;
+use App\Form\Type\BookingType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,17 +21,17 @@ class BudgetController extends AbstractController
 {
 
     public function step_one(Request $request){
-        $user = new User();
+        $booking = new Booking();
 
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(BookingType::class, $booking);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $user = $form->getData();
+            $booking = $form->getData();
 
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
+            $entityManager->persist($booking);
             $entityManager->flush();
 
             return $this->redirectToRoute('budget_step_two');
@@ -47,9 +47,28 @@ class BudgetController extends AbstractController
         return $this->render('budget/secondpage.html.twig', ['data' =>$data]);
     }
 
-    public function step_three(){
-        $data = "bla";
-        return $this->render('budget/thirdpage.html.twig', ['data' =>$data]);
+    public function step_three(Request $request){
+        $user = new User();
+
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $form->getData();
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $booking = new Booking();
+
+            return $this->redirectToRoute('budget_step_four');
+        }        
+
+        return $this->render('budget/thirdpage.html.twig', [
+            'form' =>$form->createView()
+        ]);
     }
 
     public function step_four(){
