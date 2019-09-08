@@ -12,8 +12,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Booking;
+use App\Entity\Category;
 use App\Form\Type\UserType;
 use App\Form\Type\BookingType;
+use App\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,8 +45,13 @@ class BudgetController extends AbstractController
     }
 
     public function step_two(){
-        $data = "bla";
-        return $this->render('budget/secondpage.html.twig', ['data' =>$data]);
+        $category = new Category();
+
+        $form = $this->createForm(CategoryType::class, $category);
+
+        return $this->render('budget/secondpage.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     public function step_three(Request $request){
