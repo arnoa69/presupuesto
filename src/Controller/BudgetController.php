@@ -19,9 +19,17 @@ use App\Form\Type\CategoryType;
 use App\Form\Type\ParentCategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
 
 class BudgetController extends AbstractController
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     public function step_one(Request $request){
         $booking = new Booking();
@@ -46,18 +54,18 @@ class BudgetController extends AbstractController
     }
 
     public function step_two(Request $request){
-        $category = new Category();
+        $booking = new Booking();
 
-        $form = $this->createForm(CategoryType::class, $category);
-        $form_parent = $this->createForm(ParentCategoryType::class, $category);
+        $form_parent = $this->createForm(ParentCategoryType::class);
+        $form = $this->createForm(CategoryType::class, $booking);
 
-        $form->handleRequest($request);
-        if($form->isSubmitted()){
-            var_dump($request->category_name());
+        if ($form->isSubmitted() && $form->isValid()) {
+            dd($_POST['category']['id']);
+
+            return $this->redirectToRoute('budget_step_three');
         }
-
-
-
+        
+ 
         return $this->render('budget/secondpage.html.twig', [
             'form_parent' => $form_parent->createView(),
             'form' => $form->createView(),
@@ -91,5 +99,43 @@ class BudgetController extends AbstractController
     public function step_four(){
         $data = "bla";
         return $this->render('budget/fourthpage.html.twig', ['data' =>$data]);
+    }
+
+    public function testCategoryRepo()
+    {
+        $child_category_select_option_data = array();
+
+        $child_categories = $this->getDoctrine()
+                ->getRepository(Category::class)
+                ->findChildCategoryByParentId(5);
+
+        foreach($child_categories as $value)
+        { 
+            $child_category_select_option_data[$value->getId()] = $value->getCategoryName();
+        }
+
+
+        var_dump($child_category_select_option_data);die();
+    }
+
+    public function getCategoryId(Request $request){
+        $parent_id = $request->get('parent_id');
+        $child_category_select_option_data = array();
+
+        $child_categories = $this->getDoctrine()
+                ->getRepository(Category::class)
+                ->findChildCategoryByParentId($parent_id);
+
+        foreach($child_categories as $value)
+        { 
+            $child_category_select_option_data[$value->getId()] = $value->getCategoryName();
+        }      
+        
+        $count_sub_categories = count($child_category_select_option_data);
+
+        $response = new Response();
+        return $response->setContent(json_encode([
+            'data' => $child_category_select_option_data,
+        ]));        
     }
 }

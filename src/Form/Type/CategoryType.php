@@ -3,6 +3,7 @@ namespace App\Form\Type;
 
 
 
+use App\Entity\Booking;
 use App\Entity\Category;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -35,7 +36,7 @@ class CategoryType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Category::class,
+            'data_class' => Booking::class,
         ]);
     }
 }

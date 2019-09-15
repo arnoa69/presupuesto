@@ -28,6 +28,20 @@ class CategoryRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findChildCategoryByParentId($parent_id): array
+    {
+        
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.parent_category = :parent_id')
+            ->setParameter('parent_id', $parent_id)
+            ->orderBy('c.category_name')
+            ->getQuery()
+            ->getResult()
+            ;
+
+        return $qb;
+    }
+
     // /**
     //  * @return Category[] Returns an array of Category objects
     //  */

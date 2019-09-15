@@ -17,5 +17,13 @@ $routes->add('budget_step_three', new Route('/step_three', [
 $routes->add('budget_step_four', new Route('/step_four', [
     '_controller' => [BudgetController::class, 'step_four']
 ]));
+$routes->add('get_category_id', new Route('api/getcategoryid', [
+    '_controller' => [BudgetController::class, 'getCategoryId']
+]));
 
+
+
+$routes->add('test_category', new Route('/testcategory', [
+    '_controller' => [BudgetController::class, 'testcategoryrepo']
+]));
 return $routes;
