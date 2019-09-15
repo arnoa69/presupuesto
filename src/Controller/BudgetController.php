@@ -16,6 +16,7 @@ use App\Entity\Category;
 use App\Form\Type\UserType;
 use App\Form\Type\BookingType;
 use App\Form\Type\CategoryType;
+use App\Form\Type\ParentCategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,12 +45,21 @@ class BudgetController extends AbstractController
         ]);
     }
 
-    public function step_two(){
+    public function step_two(Request $request){
         $category = new Category();
 
         $form = $this->createForm(CategoryType::class, $category);
+        $form_parent = $this->createForm(ParentCategoryType::class, $category);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted()){
+            var_dump($request->category_name());
+        }
+
+
 
         return $this->render('budget/secondpage.html.twig', [
+            'form_parent' => $form_parent->createView(),
             'form' => $form->createView(),
         ]);
     }

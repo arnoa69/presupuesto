@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CategoryType extends AbstractType
+class ParentCategoryType extends AbstractType
 {
     
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -22,14 +22,10 @@ class CategoryType extends AbstractType
                 'class' => Category::class,
                 'query_builder' => function(EntityRepository $er) {
                     return $er->createQueryBuilder('c')
-                        ->where('c.parent_category != 0');
+                        ->where('c.parent_category = 0');
                 },
                 'choice_label' => 'category_name',
-            ]);             
-
-        $builder
-            ->add('save', SubmitType::class)
-            ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
