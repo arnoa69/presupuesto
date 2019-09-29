@@ -19,6 +19,15 @@ class BookingRepository extends ServiceEntityRepository
         parent::__construct($registry, Booking::class);
     }
 
+    public function findLastInsertedId() 
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Booking[] Returns an array of Booking objects
     //  */

@@ -17,10 +17,12 @@ use App\Form\Type\UserType;
 use App\Form\Type\BookingType;
 use App\Form\Type\CategoryType;
 use App\Form\Type\ParentCategoryType;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class BudgetController extends AbstractController
 {
@@ -33,6 +35,7 @@ class BudgetController extends AbstractController
 
     public function step_one(Request $request){
         $booking = new Booking();
+        $tab_title = 'Porva dinos que queries?';
 
         $form = $this->createForm(BookingType::class, $booking);
 
@@ -49,17 +52,25 @@ class BudgetController extends AbstractController
         }        
 
         return $this->render('budget/firstpage.html.twig', [
-            'form' =>$form->createView()
+            'form' => $form->createView(),
+            'tab_title' => $tab_title,
         ]);
     }
 
     public function step_two(Request $request){
+        $tab_title = 'Elige la categoria?';
         $booking = new Booking();
+        $last_id = $this->getDoctrine()->getRepository(Booking::class)->findOneBy([], ['id' => 'desc']);;
 
+        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+    ->enableExceptionOnInvalidIndex()
+    ->getPropertyAccessor();
+
+        var_dump($propertyAccessor->getValue($last_id, 'id'));
         $form_parent = $this->createForm(ParentCategoryType::class);
         $form = $this->createForm(CategoryType::class, $booking);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($_POST) {
             dd($_POST['category']['id']);
 
             return $this->redirectToRoute('budget_step_three');
@@ -69,11 +80,13 @@ class BudgetController extends AbstractController
         return $this->render('budget/secondpage.html.twig', [
             'form_parent' => $form_parent->createView(),
             'form' => $form->createView(),
+            'tab_title' => $tab_title,
         ]);
     }
 
     public function step_three(Request $request){
         $user = new User();
+        $tab_title = 'Dinos quien eres.';
 
         $form = $this->createForm(UserType::class, $user);
 
@@ -92,13 +105,18 @@ class BudgetController extends AbstractController
         }        
 
         return $this->render('budget/thirdpage.html.twig', [
-            'form' =>$form->createView()
+            'form' =>$form->createView(),
+            'tab_title' => $tab_title,
         ]);
     }
 
     public function step_four(){
         $data = "bla";
-        return $this->render('budget/fourthpage.html.twig', ['data' =>$data]);
+        $tab_title = 'Porva dinos que queries?';
+        return $this->render('budget/fourthpage.html.twig', [
+            'data' =>$data,
+            'tab_title' => $tab_title,
+            ]);
     }
 
     public function testCategoryRepo()
