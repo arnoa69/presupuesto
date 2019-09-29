@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class BudgetController extends AbstractController
 {
@@ -36,7 +37,10 @@ class BudgetController extends AbstractController
     public function step_one(Request $request){
         $booking = new Booking();
         $tab_title = 'Porva dinos que queries?';
-
+        $session = new Session();
+        
+        var_dump($session->getId());
+//var_dump($request->getSession->getId());die();
         $form = $this->createForm(BookingType::class, $booking);
 
         $form->handleRequest($request);
@@ -60,23 +64,22 @@ class BudgetController extends AbstractController
     public function step_two(Request $request){
         $tab_title = 'Elige la categoria?';
         $booking = new Booking();
-        $last_id = $this->getDoctrine()->getRepository(Booking::class)->findOneBy([], ['id' => 'desc']);;
+        $entityManager = $this->getDoctrine()->getManager();
+        $get_last_booking_id_obj = $entityManager->getRepository(Booking::class)->findOneBy([], ['id' => 'desc']);
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-    ->enableExceptionOnInvalidIndex()
-    ->getPropertyAccessor();
-
-        var_dump($propertyAccessor->getValue($last_id, 'id'));
         $form_parent = $this->createForm(ParentCategoryType::class);
         $form = $this->createForm(CategoryType::class, $booking);
 
+        $category = $this->getDoctrine()->getRepository(Category::class);
+
         if ($_POST) {
-            dd($_POST['category']['id']);
+            $get_last_booking_id_obj->setCategory($category->find($_POST['category']['id']));
+            $get_last_booking_id_obj->setStatusCompleted(0);
+            $entityManager->flush();
 
             return $this->redirectToRoute('budget_step_three');
         }
-        
- 
+
         return $this->render('budget/secondpage.html.twig', [
             'form_parent' => $form_parent->createView(),
             'form' => $form->createView(),
@@ -85,10 +88,13 @@ class BudgetController extends AbstractController
     }
 
     public function step_three(Request $request){
-        $user = new User();
-        $tab_title = 'Dinos quien eres.';
+        $tab_title = 'Dinos quien eres.';        
+        $user = new User();        
 
         $form = $this->createForm(UserType::class, $user);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $get_last_booking_id_obj = $entityManager->getRepository(Booking::class)->findOneBy([], ['id' => 'desc']);        
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -99,7 +105,10 @@ class BudgetController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $booking = new Booking();
+            $get_last_created_user = $entityManager->getRepository(User::class)->findOneBy([], ['id' => 'desc']);
+            $get_last_booking_id_obj->setUser($get_last_created_user);
+            $get_last_booking_id_obj->setStatusCompleted(1);
+            $entityManager->flush();
 
             return $this->redirectToRoute('budget_step_four');
         }        
