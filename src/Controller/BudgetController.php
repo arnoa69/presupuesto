@@ -127,7 +127,6 @@ class BudgetController extends AbstractController
             'form_parent' => $form_parent->createView(),
             'form' => $form->createView(),
             'tab_title' => $tab_title,
-            'session' => $this->get('session')->getId(),
         ]);
     }
 
