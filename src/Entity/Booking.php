@@ -38,7 +38,7 @@ class Booking
     private $user;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $status_completed;
 
@@ -51,6 +51,11 @@ class Booking
      * @ORM\Column(type="integer", nullable=true)
      */
     private $category_id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $session;    
 
     public function getId(): ?int
     {
@@ -105,12 +110,12 @@ class Booking
         return $this;
     }
 
-    public function getStatusCompleted(): ?bool
+    public function getStatusCompleted(): ?int
     {
         return $this->status_completed;
     }
 
-    public function setStatusCompleted(bool $status_completed): self
+    public function setStatusCompleted(?int $status_completed): self
     {
         $this->status_completed = $status_completed;
 
@@ -140,4 +145,16 @@ class Booking
 
         return $this;
     }
+
+    public function getSession(): ?string
+    {
+        return $this->session;
+    }
+
+    public function setSession(?string $session): self
+    {
+        $this->session = $session;
+
+        return $this;
+    }    
 }
